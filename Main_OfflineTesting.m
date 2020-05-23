@@ -24,7 +24,9 @@ toc
 %-------------- CONSTRUCTING OUTPUT --------------%
 % QUANTITATIVE ANALYSIS FOR VALIDATION
 
-[STATS] = evaluateFloodPrediction(FLO_test,FLO_pred,E,N,DIS_analogL1,testConfig);
+% [STATS] = evaluateFloodPrediction(FLO_test,FLO_pred,E,N,DIS_analogL1,testConfig);
+[STATS] = evaluateFloodPrediction_FCSversion(FLO_test,FLO_pred,E,N,DIS_analogL1,testConfig);
+
 % ORIGINAL FORECAST OUTPUT
 [FOREOUTPUT] = formatOutput(AnalogInput,RES_analog,DIS_analogL1,DIS_analogL2,FOR_test,FOR_analog,FLO_test,FLO_pred,E,N);
 

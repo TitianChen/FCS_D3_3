@@ -1,7 +1,6 @@
-function [STATS] = evaluateFloodPrediction(FLO_test,FLO_pred,E,N,DIS_analog,testConfig)
-%
-% reference: (Wing et al., 2017)
-%
+function [STATS] = evaluateFloodPrediction_FCSVersion(FLO_test,FLO_pred,E,N,DIS_analog,testConfig)
+% this function is to compute several evaluation metrics as we agreed on
+% FCS meeting.
 
 STATS = struct;
 unit = '3km';
@@ -9,27 +8,28 @@ aggUnit = 3;
 thr = 0;
 
 
-D1H1 = @(sim,obs)1e-6+sum(sim(:)>thr & obs(:)>thr);
-D0H1 = @(sim,obs)1e-6+sum(sim(:)<=thr & obs(:)>thr);
-D1H0 = @(sim,obs)1e-6+sum(sim(:)>thr & obs(:)<=thr);
-D0H0 = @(sim,obs)1e-6+sum(sim(:)<=thr & obs(:)<=thr);
+TP = @(sim,obs)1e-6+sum(sim(:)>thr & obs(:)>thr);
+FN = @(sim,obs)1e-6+sum(sim(:)<=thr & obs(:)>thr);
+FP = @(sim,obs)1e-6+sum(sim(:)>thr & obs(:)<=thr);
+TN = @(sim,obs)1e-6+sum(sim(:)<=thr & obs(:)<=thr);
 
 
 RMSE = @(sim,obs)sqrt(nanmean((squeeze(sim(:))-squeeze(obs(:))).^2));
 MAPE = @(sim,obs)nanmean(abs(sim(obs(:)>thr | sim(:)>thr) - ...
     obs(obs(:)>thr | sim(:)>thr)./obs(obs(:)>thr | sim(:)>thr)));
 
-HIT = @(sim,obs)D1H1(sim,obs)./(D0H1(sim,obs)+D1H1(sim,obs));
-FALSE_ALARM = @(sim,obs)D1H0(sim,obs)./(D1H0(sim,obs)+D1H1(sim,obs));
-CRITICAL = @(sim,obs)D1H1(sim,obs)./(D1H1(sim,obs)+D0H1(sim,obs)+D1H0(sim,obs));
-ERROR_BIAS = @(sim,obs)D1H0(sim,obs)./D0H1(sim,obs);
+TPR = @(sim,obs)TP(sim,obs)./(TP(sim,obs)+FN(sim,obs));
+TNR = @(sim,obs)TN(sim,obs)./(FP(sim,obs)+TN(sim,obs));
+PPR = @(sim,obs)TP(sim,obs)./(TP(sim,obs)+FP(sim,obs));
+NPR = @(sim,obs)TN(sim,obs)./(TN(sim,obs)+FN(sim,obs));
+ACC = @(sim,obs)(TN(sim,obs)+TP(sim,obs))./...
+    (TP(sim,obs)+TN(sim,obs)+FN(sim,obs)+FP(sim,obs));
 
 STATS.rmse = NaN(size(FLO_test.floodmaps,1),1);
 
 mapsSim = FLO_pred.floodmaps;
 mapsObs = FLO_test.floodmaps;
 STATS.eventTi = [];
-
 
 mapSim = getmapSim(mapsSim,FLO_pred.eventNo,DIS_analog,testConfig);
 
@@ -45,15 +45,16 @@ for evi = 1:size(mapsSim,1)
     STATS.eventTi(evi) = evi - find(FLO_test.eventNo == FLO_test.eventNo(evi),1);
     STATS.eventTT(evi) = find(FLO_test.eventNo == FLO_test.eventNo(evi),1,'last')-...
         find(FLO_test.eventNo == FLO_test.eventNo(evi),1)+1;
-    STATS.hit(evi) = HIT(aggregateImage(mapSim(evi,:,:),aggUnit,'max'),...
+    STATS.tpr(evi) = TPR(aggregateImage(mapSim(evi,:,:),aggUnit,'max'),...
         aggregateImage(mapsObs(evi,:,:),aggUnit,'max'));
-    STATS.fa(evi) = FALSE_ALARM(aggregateImage(mapSim(evi,:,:),aggUnit,'max'),...
+    STATS.tnr(evi) = TNR(aggregateImage(mapSim(evi,:,:),aggUnit,'max'),...
         aggregateImage(mapsObs(evi,:,:),aggUnit,'max'));
-    STATS.cci(evi) = CRITICAL(aggregateImage(mapSim(evi,:,:),aggUnit,'max'),...
+    STATS.ppr(evi) = PPR(aggregateImage(mapSim(evi,:,:),aggUnit,'max'),...
         aggregateImage(mapsObs(evi,:,:),aggUnit,'max'));
-    STATS.eb(evi) = ERROR_BIAS(aggregateImage(mapSim(evi,:,:),aggUnit,'max'),...
+    STATS.npr(evi) = NPR(aggregateImage(mapSim(evi,:,:),aggUnit,'max'),...
         aggregateImage(mapsObs(evi,:,:),aggUnit,'max'));
-    
+    STATS.acc(evi) = ACC(aggregateImage(mapSim(evi,:,:),aggUnit,'max'),...
+        aggregateImage(mapsObs(evi,:,:),aggUnit,'max'));
 end
 
 STATS.eventNo = FLO_test.eventNo;

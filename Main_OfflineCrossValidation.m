@@ -1,6 +1,6 @@
 function STATS = Main_OfflineCrossValidation(version,testConfig,filefolder)
 %
-% Main_OfflineCrossValidation will evluate the statistics related to the
+% Main_OfflineCrossValidation will evluate the statistics related to
 % testConfig using the data saved in filefolder.
 % 
 % Example:

@@ -11,7 +11,7 @@ function getGFS()
 %
 % Parameters to download include:
 
-msgbox('Need Developing','warning','-')
+msgbox('Need to Develop','warning','-')
 
 % geopotentail height
 % relative humidity

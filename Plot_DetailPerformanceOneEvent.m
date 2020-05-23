@@ -3,9 +3,9 @@ close all;
 evNo = '013';
 
 figure(1)
+setFigureProperty()
 load(['K:\DATA_FCS\CrossVal\v1_PCA_PCs05\STATS_v1_ev',evNo,'.mat'])
 aux_modelSetting(FOREOUTPUT,STATS)
-setFigureProperty()
 XYWH = [0,0,1400,400];
 set(gcf,'units','points','position',XYWH);
 

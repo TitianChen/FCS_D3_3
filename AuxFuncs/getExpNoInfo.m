@@ -1,8 +1,6 @@
 function [version,testConfig,filefolder] = getExpNoInfo(expNo)
 % getExpNoInfo(expNo) will get Corresponding exp info,
 % see detail in report WP3.3
-% @ Yuting
-% yuting.chen17@imperial.ac.uk
 
 arguments
     expNo (1,:) char

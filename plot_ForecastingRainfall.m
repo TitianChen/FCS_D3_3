@@ -1,7 +1,5 @@
 % --------------------------------------------------------------- %
 % THIS IS TO CHECK & PLOT ENSEMBLES_BASED FORECASTING MODEL
-% Yuting Chen
-% Imperial College
 % --------------------------------------------------------------- %
 
 leadT = 2; % unit [h]
@@ -12,6 +10,7 @@ expNo = 'C1P5-Rad1';
 
 saveFigFp = 'C:\Users\Yuting Chen\Dropbox (Personal)\Data_PP\Fig_FCS\ForecastingResTest\';
 Area = getBoundaryShp('Birm');
+mkdir(saveFigFp);
 
 for evi = eventNo(:)
     
@@ -27,7 +26,7 @@ for evi = eventNo(:)
         plotAllinOne(Area,Obs.EE,Obs.NN,squeeze(Obs.RMap(:,:,evti)),...
             simfp(evti,:),simid(evti,:),forid(evti,:),...
             squeeze(flmaps.val(evti,:,:,:)),flmaps.E,flmaps.N);
-        savePlot([saveFigFp,figName],'XYWH',[50,50,800,420],'needreply','N','onlyPng',true);
+        savePlot([saveFigFp,figName],'Units','centimeters','XYWH',[0,0,14,7.5],'needreply','N','onlyPng',true);
     
     end
     
@@ -129,7 +128,7 @@ for ensNo = 1:12
     [cmap, ~, ~, ~, ~] = cptcmap('flood_blue','mapping','scaled','ncol',15);
     colfmap = NaN(numel(thismap),3);
     colfmap(~isnan(thismap(:)),:) = cmap(getLevel(thismap(~isnan(thismap)),linspace(0,20,15)),:);
-    scatter(ax2,fE(:),fN(:),thismap(:)*1,colfmap,'fill');shading flat;
+    scatter(ax2,fE(:),fN(:),thismap(:)*0.4,colfmap,'fill');shading flat;
     alpha(0.6)
     %%Link them together
     linkaxes([ax1,ax2])
@@ -142,7 +141,7 @@ for ensNo = 1:12
 %     caxis([0,20])
     xlim([min(EE(:)),max(EE(:))])
     ylim([min(NN(:)),max(NN(:))])
-    set(gca,'YTick',[],'YTickLabel',[],'XTick',[],'XTickLabel',[],'Linewidth',2);
+    set(gca,'YTick',[],'YTickLabel',[],'XTick',[],'XTickLabel',[],'Linewidth',1);
     end
     end
 end
@@ -152,9 +151,12 @@ end
         shading flat;
         hold on;
         plot(Area.X/1000,Area.Y/1000,'k','linewidth',1);
-        cptcmap('precip_meteoswiss', 'mapping','direct');%,'ncol',20);
-        % axis off
-        set(gca,'YTick',[],'YTickLabel',[],'XTick',[],'XTickLabel',[],'Linewidth',2);
+        cptcmap('mld_rain-mmh', 'mapping','scaled');%,'ncol',20);
+        caxis([0,80])
+        % cptcmap('precip_meteoswiss', 'mapping','direct');
+        % caxis([0,3])
+        % axis off% precip_meteoswiss% cw1-002
+        set(gca,'YTick',[],'YTickLabel',[],'XTick',[],'XTickLabel',[],'Linewidth',1);
         set(gca,'color',[0.8 0.8 0.8]);
     end
 end
@@ -177,7 +179,7 @@ for i = 1:length(x)
     cptcmap('GMT_gray','mapping', 'scaled','flip',false,'ncol',256); caxis([0,255])
     drawnow;
 end
-plot(Area.X,Area.Y,'k','linewidth',2)
+plot(Area.X,Area.Y,'k','linewidth',1)
 set(gca,'YDir','normal')
 % axis equal
 axis off
