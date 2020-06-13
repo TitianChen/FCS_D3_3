@@ -10,7 +10,7 @@ function [RES_analog,DIS_analogL1,DIS_analogL2] = Model_Analogue(AnalogInput,FAN
 % @ Yuting Chen
 % yuting.chen17@imperial.ac.uk
 
-% sparse input
+% get input
 PRED = AnalogInput.PRED;
 PREDval = AnalogInput.PREDval;
 PREDRAIN = AnalogInput.PREDRAIN;
@@ -18,6 +18,7 @@ PREDRAINval = AnalogInput.PREDRAINval;
 raintime = AnalogInput.raintime;
 raintimeval = AnalogInput.raintimeval;
 timegap = AnalogInput.timegap; % unit [1h]
+
 % FIRST LAYER ----- FORCING ANALOGUES
 
 FA = PRED;
